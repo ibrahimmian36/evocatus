@@ -31,12 +31,6 @@ jobs:
           set -euo pipefail
           python3 tools/gen_table.py --spec official/competition/tools/verifier/data/stable_move_spec.json --out /tmp/Table.lean
           diff /tmp/Table.lean lean/StableCertificate/Table.lean
-      - name: The upstream AC.lean we build against is byte-identical to the official file
-        run: |
-          set -euo pipefail
-          cd lean && lake update ac_square_family --no-cache 2>/dev/null || true
-          test -f .lake/packages/ac_square_family/lean/AC.lean || (cd .. && exit 1)
-          echo "927ba318d26b06c312140117b2a4856373832ed2c043944f520ec7337bcfca1b  .lake/packages/ac_square_family/lean/AC.lean" | sha256sum -c -
       - uses: leanprover/lean-action@v1
         with:
           lake-package-directory: lean
@@ -44,6 +38,12 @@ jobs:
           build: "true"
           use-mathlib-cache: "true"
           build-args: "StableCertificate Checks stablecheck"
+      - name: The upstream AC.lean we built against is byte-identical to the official file
+        run: |
+          set -euo pipefail
+          test -f lean/.lake/packages/ac_square_family/lean/AC.lean
+          echo "927ba318d26b06c312140117b2a4856373832ed2c043944f520ec7337bcfca1b  lean/.lake/packages/ac_square_family/lean/AC.lean" | sha256sum -c -
+          test "$(git -C lean/.lake/packages/ac_square_family rev-parse HEAD)" = "d0ed2c06bb3a9e7ed31e2f31e24d17de6323efe8"
       - name: Official golden vectors pass through the official verifier
         run: |
           set -euo pipefail
