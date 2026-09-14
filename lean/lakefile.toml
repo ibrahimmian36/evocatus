@@ -1,0 +1,23 @@
+name = "evocatus"
+version = "0.1.0"
+defaultTargets = ["StableCertificate"]
+
+[leanOptions]
+autoImplicit = false
+warningAsError = true
+
+[[require]]
+name = "ac_square_family"
+git = "https://github.com/Robby955/ac-square-divisibility.git"
+rev = "d0ed2c06bb3a9e7ed31e2f31e24d17de6323efe8"
+subDir = "lean"
+
+[[lean_lib]]
+name = "StableCertificate"
+
+[[lean_lib]]
+name = "Checks"
+
+[[lean_exe]]
+name = "stablecheck"
+root = "Main"

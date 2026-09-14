@@ -1,0 +1,5 @@
+lean/.lake/
+lean/Checks/Kernel/Baseline.lean
+__pycache__/
+*.pyc
+.DS_Store

@@ -1,0 +1,27 @@
+evocatus — kernel-checked Stable AC certificates against the official SAIR statement
+Copyright 2026 Ibrahim Mian and Shayaan Siddique (Millennium Research)
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This package builds on two upstream works, both Apache-2.0:
+
+1. SAIR Foundation / Caltech, the Andrews–Curtis Conjecture Challenge repository,
+   https://github.com/SAIRcompetition/Andrews-Curtis, commit
+   a0fd6e6f52d82c93ccc06ab91d81e8fa3678256e. The official statement
+   competition/tools/lean/AC.lean (sha256
+   927ba318d26b06c312140117b2a4856373832ed2c043944f520ec7337bcfca1b) is the
+   trusted definition that every theorem here is stated against. The frozen move
+   table lean/StableCertificate/Table.lean is generated from that repository's
+   competition/tools/verifier/data/stable_move_spec.json. The Python reference
+   verifier from the same commit is the second implementation in the tests.
+
+2. Robert Sneiderman, ac-square-divisibility,
+   https://github.com/Robby955/ac-square-divisibility, commit
+   d0ed2c06bb3a9e7ed31e2f31e24d17de6323efe8, Lake package ac_square_family
+   (subdirectory lean/). It supplies the unchanged AC module, the ordinary-move
+   checker ACCertificate (Move, Move.sound, replay, parseTuple) and the stable
+   lemmas in ACDeferral (stabilize_at, stabilize_succAbove, stabilize_standard_same).
+   It is consumed as a Lake dependency, not copied.
+
+Mathlib (Apache-2.0) at revision 5e932f97dd25535344f80f9dd8da3aab83df0fe6 and
+Lean 4.29.1 are pinned in lean/lake-manifest.json and lean/lean-toolchain.

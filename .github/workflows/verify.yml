@@ -1,0 +1,77 @@
+name: Build, kernel-check, axiom gate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Pin control — official repository at the recorded commit
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/SAIRcompetition/Andrews-Curtis.git official
+          git -C official checkout --quiet a0fd6e6f52d82c93ccc06ab91d81e8fa3678256e
+          echo "927ba318d26b06c312140117b2a4856373832ed2c043944f520ec7337bcfca1b  official/competition/tools/lean/AC.lean" | sha256sum -c -
+          test "$(cat lean/lean-toolchain)" = "leanprover/lean4:v4.29.1"
+          test "$(cat official/competition/tools/lean/lean-toolchain)" = "leanprover/lean4:v4.29.1"
+          python3 -c "import json,sys; m=json.load(open('lean/lake-manifest.json')); p={x['name']:x for x in m['packages']}; assert p['mathlib']['rev']=='5e932f97dd25535344f80f9dd8da3aab83df0fe6', p['mathlib']; assert p['ac_square_family']['rev']=='d0ed2c06bb3a9e7ed31e2f31e24d17de6323efe8', p['ac_square_family']; print('pins ok')"
+      - name: Table generated from the specification is unchanged
+        run: |
+          set -euo pipefail
+          python3 tools/gen_table.py --spec official/competition/tools/verifier/data/stable_move_spec.json --out /tmp/Table.lean
+          diff /tmp/Table.lean lean/StableCertificate/Table.lean
+      - name: The upstream AC.lean we build against is byte-identical to the official file
+        run: |
+          set -euo pipefail
+          cd lean && lake update ac_square_family --no-cache 2>/dev/null || true
+          test -f .lake/packages/ac_square_family/lean/AC.lean || (cd .. && exit 1)
+          echo "927ba318d26b06c312140117b2a4856373832ed2c043944f520ec7337bcfca1b  .lake/packages/ac_square_family/lean/AC.lean" | sha256sum -c -
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: lean
+          auto-config: "false"
+          build: "true"
+          use-mathlib-cache: "true"
+          build-args: "StableCertificate Checks stablecheck"
+      - name: Official golden vectors pass through the official verifier
+        run: |
+          set -euo pipefail
+          cd official && PYTHONPATH=competition/tools python3 -m verifier --golden competition/tools/verifier/data/golden_vectors.json | tail -1
+      - name: Differential tests against the official verifier
+        env:
+          ACC_OFFICIAL: ${{ github.workspace }}/official
+          EVOCATUS_LEDGER: /tmp/ci_ledger.jsonl
+        run: |
+          set -euo pipefail
+          python3 tools/diff_table.py
+          python3 tools/golden.py
+          python3 tools/fuzz_step.py --n 100000 --seed 20260913
+          python3 tools/gen_paths.py --n 400 --seed 20260913 --out /tmp/generated.jsonl
+          python3 tools/run_corpus.py --seed 20260913 --generated /tmp/generated.jsonl
+      - name: Axiom gate with negative control
+        env:
+          EVOCATUS_LEDGER: /tmp/ci_ledger.jsonl
+        run: |
+          set -euo pipefail
+          python3 tools/axiom_gate.py --negative-control
+      - name: This run's ledger must contain every test and no failure
+        run: |
+          set -euo pipefail
+          python3 -c "
+          import json, sys
+          rows = [json.loads(l) for l in open('/tmp/ci_ledger.jsonl')]
+          need = {'table_roundtrip','golden_vectors','fuzz_step','gen_paths','training_stable','training_ac','generated_paths','mutations','axiom_gate','axiom_gate_negative_control'}
+          seen = {r['test'] for r in rows}; bad = [r for r in rows if not r['passed']]
+          print(len(rows), 'records; missing:', sorted(need - seen), '; failed:', len(bad))
+          sys.exit(1 if bad or (need - seen) else 0)"
