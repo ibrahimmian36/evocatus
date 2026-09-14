@@ -88,3 +88,36 @@ Observations that were not in the handoff and that future work needs.
     real bug: for an inverse occurrence `u y⁻¹ v` the multiplier is the conjugate of
     `r_i⁻¹` by `v⁻¹y`, not by `v⁻¹`; the wrong conjugator left the occurrence in place
     and the scan looped. The loop is now bounded and asserts completion.
+
+11. **Phase 8 (2026-09-14), see docs/PHASE8_PROMPT.md.** Hardening before submission.
+    Machine requirements measured on an Apple Silicon laptop (macOS 25.5): `lean/.lake`
+    is 7.2 GB after `lake exe cache get`; an incremental `lake build Checks` peaks at
+    1.8 GB resident and takes about 5 s, a build of every check file from scratch
+    peaks at 2.0 GB and takes about 30 s; a 5,000-move replay by `stablecheck` uses
+    46 MB and 0.2 s; the whole front-end fuzz keeps `stablecheck` under 90 MB; the
+    full `tools/run_all.sh` takes about six minutes, dominated by 86 kernel checks at
+    about two seconds each. Nothing needs more than 2 GB of memory once the Mathlib
+    cache is present. Defect found and fixed: a whitespace-only input line produced
+    no reply from `stablecheck`, so a caller would wait forever; every non-EOF line
+    now gets a JSON reply. The `Iterated` class packages repeated substitution and
+    removal; its step constructor carries only `R i = rel g w'` (checked by `#print`),
+    the trivial-group hypothesis being supplied by invariance along the way.
+
+12. **Phase 9 (2026-09-14), see docs/PHASE9_PROMPT.md.** Discovery Track groundwork
+    at zero compute. Research outcome: the pool's `uncertified` label means the
+    literature reports a solution but no public replayable certificate exists. The
+    Caltech ACSolverX repository publishes its datasets under CC BY 4.0, but those
+    files are starting presentations; the solution paths are stored inside model
+    checkpoints with no stated licence, and shehper/AC-Solver has no licence file.
+    Harvesting was therefore dropped: no path enters a submission without a licence
+    that permits it. Carreras's certificates are equivalences between presentations,
+    not trivializations. Built: `tools/pool_index.py` (canonical form under relator
+    order, rotation and inversion, the rule the data README states; 10,115 forms, no
+    collisions, no training leak, 1,000/1,000 symmetry trials), and
+    `tools/submission_builder.py` (verifies every candidate under both
+    specifications from the pool's exact words, enforces the 500-line and 10 MB
+    limits, writes a receipt; refuses non-pool starts and rotated starts).
+    `tools/search_smoke.py` is a capped greedy baseline: 0/50 at 10,000 nodes in
+    10 s and 130 MB, and 4/300 at the same budget in 58 s, all four accepted by the
+    builder and written as eight lines (AC and Stable AC). The Discovery Track needs a
+    real search stack and a compute budget; nothing here scores.

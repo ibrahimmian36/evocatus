@@ -12,5 +12,7 @@ python3 tools/run_corpus.py --seed 20260913 --mutants-per-path 4
 python3 tools/kernel_theorems.py
 python3 tools/family_tests.py --n 120 --seed 20260914 --kernel 20
 python3 tools/lemma11_tests.py --n 120 --seed 20260914 --kernel 20
+python3 tools/exe_fuzz.py --seed 20260914 --n 2000
+python3 tools/pool_index.py --check
 python3 tools/axiom_gate.py --negative-control
 echo "all tests passed"

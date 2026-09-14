@@ -3,3 +3,6 @@ lean/Checks/Kernel/Baseline.lean
 __pycache__/
 *.pyc
 .DS_Store
+corpus/pool_index.json
+corpus/submission_draft.txt
+corpus/submission_draft.txt.receipt.json

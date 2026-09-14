@@ -83,6 +83,9 @@ This is the paper's stable-specific lemma, the supermove that lowers rank and th
 behind its Remark 17 class. The proof substitutes `w` for `y` through the
 normal-closure lemma, transfers triviality to the reduced tuple through the retraction
 `y ↦ w`, replaces `y⁻¹w` by `y`, and removes the pair by one official destabilization.
+Iterating the lemma from a conjugation tree gives the class of their Remark 17, and
+every member is stably trivial (`Lemma11.remark17_stableTrivial`); nothing is claimed
+about ordinary AC-triviality of that class, which is their Conjecture 18.
 
 **Conjecture 19, stated and reduced.** We state Conjecture 19 of Shehper et al.
 against the official definitions and prove that it reduces to the single case

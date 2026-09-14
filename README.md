@@ -84,7 +84,11 @@ and the reduced presentation presents the trivial group. This is the paper's
 stable-specific lemma, the supermove that lowers rank. The proof substitutes `w` for
 `y` through the normal-closure lemma (each occurrence is congruence modulo `y⁻¹w`),
 transfers triviality to the reduced tuple through the retraction `y ↦ w`, replaces
-`y⁻¹w` by `y`, and removes the pair by one official destabilization.
+`y⁻¹w` by `y`, and removes the pair by one official destabilization. The iterated
+class (`Lemma11.Iterated`, whose step carries only the syntactic hypothesis) is
+stably trivial whenever its base is (`iterated_stableTrivial`); with a conjugation
+tree as base this is the class of Remark 17 (`Remark17.lean`). Nothing is claimed
+about ordinary AC-triviality of that class, which is their Conjecture 18.
 
 Trust base: Lean 4.29.1, Mathlib `5e932f97`, the official `AC.lean` at commit
 `a0fd6e6` unchanged (sha256 `927ba318…cfca1b`, asserted in CI), and the axioms
@@ -118,10 +122,13 @@ fail is not a check, and the axiom gate is run against a `sorry` and a
 | Kernel theorems (`decide +kernel`) | 46 certificates: 6 golden, 20 training, 20 generated; up to 161 moves and rank 8; longest 2.96 s wall including imports |
 | Conjugation-tree family (`tools/family_tests.py`) | 120 random and forced instances at ranks 1–8 (chains, stars, random trees, `z` containing `x_i` and `x_{p(i)}`, all-negative signs): Lean `#eval` of `tree` equals the independent Python construction 120/120; the extracted three-moves-per-relator certificates are accepted by the official verifier 120/120 and 20 are kernel-checked through `checkEncodedAt` (up to rank 8, 73 moves); the braid witness and a rank-2 instance of the normal-closure mechanism are verified and kernel-checked |
 | Substitution and removal (`tools/lemma11_tests.py`) | 120 instances built by reverse substitution from conjugation trees at ranks 2–8, with `y` and `y⁻¹w` at independent positions including the corners and `g = i`, `w` empty, one letter, or containing every generator, and inverse and repeated occurrences: Lean `reduced` equals the tree 120/120; explicit certificates (substitute back, trivialize, kill `w`, invert, destabilize at position `g`) accepted by the official verifier 120/120, 20 kernel-checked; negative controls recorded |
-| Axiom gate | 26 named theorems and all 86 kernel theorems within the three axioms; negative controls fail as required |
+| Boundary theorems (`lean/Checks/Edge.lean`) | ranks 0 and 1 of chains, trees and Lemma 11; the decoder's block edges 0, 13, 14, 15, 16, 17, 22, 23, 137, 256, 257 accepted or rejected at the ranks where the specification says so, as kernel-checked theorems |
+| Front-end fuzz (`tools/exe_fuzz.py`) | 35 hostile lines (invalid JSON, missing fields, letters 0 or out of rank, floats, booleans, ids −1, 257 and 2⁶², a 100,000-move list, a 1 MB line): one JSON reply each and the process still answers afterwards; 2,000 edge queries at ranks 0–10 agree with `stable_core.apply_move`; peak memory 85 MB |
+| Axiom gate | 29 named theorems and all 86 kernel theorems within the three axioms; negative controls fail as required |
 
-Timings are in `ledger/kernel_timings.json`. The official verifier's compiled
-replay is linear in path length; a 5,000-move path replays in 0.03 s.
+Timings are in `ledger/kernel_timings.json`; machine requirements are in
+`docs/NOTES.md` (under 2 GB of memory once the Mathlib cache is present). Compiled
+replay is linear in path length; a 5,000-move path replays in 0.2 s.
 
 ## Check it yourself
 
@@ -149,13 +156,25 @@ build log. The third line runs the whole table above and the axiom gate.
 | `lean/StableCertificate/Chain.lean`, `Family.lean` | conjugation trees are AC-trivial at every rank; arbitrary root relator |
 | `lean/StableCertificate/Conjecture19.lean` | Conjecture 19 stated against the official definitions and reduced to `w = x_i` |
 | `lean/StableCertificate/AnyRank.lean` | certificates from any starting rank |
-| `lean/StableCertificate/Lemma11.lean` | substitution and removal (Lemma 11) against the official stable relation |
+| `lean/StableCertificate/Lemma11.lean` | substitution and removal (Lemma 11) against the official stable relation; the iterated class |
+| `lean/StableCertificate/Remark17.lean` | the Remark 17 class over a conjugation tree is stably trivial |
+| `docs/AUDIT.md` | every claim sentence mapped to its theorem, hypotheses and test |
 | `lean/Main.lean` | `stablecheck`, a line-oriented JSON front end |
-| `lean/Checks/` | kernel-checked certificates; `Checks/Kernel/` is generated |
+| `lean/Checks/` | kernel-checked certificates and boundary theorems; `Checks/Kernel/` is generated |
 | `tools/` | table generator, differential tests, corpus generator, kernel suite, axiom gate |
 | `corpus/generated.jsonl` | the 400 generated certificates with official receipts |
 | `ledger/` | append-only test ledger, golden details, kernel timings |
 | `docs/` | Phase 0 memo, build notes, the SAIR form draft, the AK(3) note |
+
+## Discovery Track tools
+
+`tools/pool_index.py` canonicalizes the 10,115 pool presentations under the
+official matching rule and checks itself; `tools/submission_builder.py` turns
+`(presentation, moves)` pairs into a `submission.txt` in which every line was
+verified by the official verifier from the pool's exact words, with a receipt for
+refused candidates; `tools/search_smoke.py` is a capped greedy baseline. These
+produce no score by themselves; they exist so that any future search result is
+attributed, verified and formatted correctly before an upload.
 
 ## Built on
 

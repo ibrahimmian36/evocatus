@@ -258,3 +258,35 @@ theorem reduced_presentsTrivialGroup (R : Relators (n + 1)) (i g : Fin (n + 1)) 
   (substitution_removal R i g w' hRi htriv).presentsTrivialGroup_iff.mpr htriv
 
 end AC.Lemma11
+
+namespace AC.Lemma11
+
+open AC
+
+/-! ## Iterated substitution and removal (the class of Remark 17). -/
+
+/-- `Iterated P Q`: `Q` is obtained from `P` by finitely many substitution-and-removal
+steps. A step carries only the syntactic hypothesis `R i = rel g w'`; the
+trivial-group hypothesis of Lemma 11 is supplied along the way by invariance. -/
+inductive Iterated : Presentation → Presentation → Prop
+  | refl (P : Presentation) : Iterated P P
+  | step {P : Presentation} {n : ℕ} {R : Relators (n + 1)} (h : Iterated P ⟨n + 1, R⟩)
+      (i g : Fin (n + 1)) (w' : Word n) (hRi : R i = rel g w') :
+      Iterated P ⟨n, reduced R i g w'⟩
+
+/-- Every presentation obtained from a stably trivial one by iterated substitution
+and removal is stably trivial. -/
+theorem iterated_stableTrivial {P Q : Presentation} (h : Iterated P Q)
+    (hP : StableReachable P ⟨P.1, standard P.1⟩) :
+    StableReachable Q ⟨Q.1, standard Q.1⟩ := by
+  induction h with
+  | refl => exact hP
+  | step h i g w' hRi ih =>
+    have htriv : PresentsTrivialGroup _ := presentsTrivialGroup_of_stableReachable_standard ih
+    exact (stableTrivial_iff _ i g w' hRi htriv).mp ih
+
+theorem iterated_presentsTrivialGroup {P Q : Presentation} (h : Iterated P Q)
+    (hP : StableReachable P ⟨P.1, standard P.1⟩) : PresentsTrivialGroup Q.2 :=
+  presentsTrivialGroup_of_stableReachable_standard (iterated_stableTrivial h hP)
+
+end AC.Lemma11

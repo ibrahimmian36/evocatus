@@ -65,11 +65,11 @@ def handleCheckAC (o : Json) : Except String Json := do
   return Json.mkObj [("accepted", AC.Certificate.checkEncoded words moves)]
 
 partial def loop (h : IO.FS.Stream) (out : IO.FS.Stream) : IO Unit := do
-  let line ← h.getLine
-  if line.isEmpty then return
-  let line := String.ofList (line.toList.reverse.dropWhile Char.isWhitespace).reverse
-  if line.isEmpty then loop h out else
-  let res : Except String Json := do
+  let raw ← h.getLine
+  if raw.isEmpty then return   -- end of input
+  let line := String.ofList (raw.toList.reverse.dropWhile Char.isWhitespace).reverse
+  let res : Except String Json :=
+    if line.isEmpty then .error "empty line" else do
     let j ← Json.parse line
     let kind ← (← j.getObjVal? "kind").getStr?
     match kind with

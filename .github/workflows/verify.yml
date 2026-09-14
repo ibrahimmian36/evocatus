@@ -61,6 +61,8 @@ jobs:
           python3 tools/run_corpus.py --seed 20260913 --generated /tmp/generated.jsonl
           python3 tools/family_tests.py --n 60 --seed 20260914 --kernel 8
           python3 tools/lemma11_tests.py --n 60 --seed 20260914 --kernel 8
+          python3 tools/exe_fuzz.py --seed 20260914 --n 500
+          python3 tools/pool_index.py --check
       - name: Axiom gate with negative control
         env:
           EVOCATUS_LEDGER: /tmp/ci_ledger.jsonl
@@ -73,7 +75,7 @@ jobs:
           python3 -c "
           import json, sys
           rows = [json.loads(l) for l in open('/tmp/ci_ledger.jsonl')]
-          need = {'table_roundtrip','golden_vectors','fuzz_step','gen_paths','training_stable','training_ac','generated_paths','mutations','family_extraction','family_paths','family_kernel','lemma11_extraction','lemma11_certificates','lemma11_kernel','axiom_gate','axiom_gate_negative_control'}
+          need = {'table_roundtrip','golden_vectors','fuzz_step','gen_paths','training_stable','training_ac','generated_paths','mutations','family_extraction','family_paths','family_kernel','lemma11_extraction','lemma11_certificates','lemma11_kernel','exe_fuzz_hostile','exe_fuzz_edge_ranks','pool_index','axiom_gate','axiom_gate_negative_control'}
           seen = {r['test'] for r in rows}; bad = [r for r in rows if not r['passed']]
           print(len(rows), 'records; missing:', sorted(need - seen), '; failed:', len(bad))
           sys.exit(1 if bad or (need - seen) else 0)"
