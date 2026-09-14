@@ -26,6 +26,32 @@ The endpoint gap is bridged inside the proof: the Discovery verifier ends at the
 empty presentation, the official conjecture ends at `⟨2, standard 2⟩`, and two
 official stabilizations connect them (`empty_to_standard2`).
 
+Three further modules prove facts about the official relations themselves.
+
+`lean/StableCertificate/Official.lean` proves the claims that `AC.lean` states in
+prose but leaves unproved: every ordinary and stable move can be undone by moves
+(`Step.reverse`, `StableStep.reverse`), so `Reachable` and `StableReachable` are
+equivalence relations (`Reachable.equivalence`, `StableReachable.equivalence`);
+ending at `⟨n, standard n⟩` is equivalent to ending at the empty presentation
+(`stableReachable_standard_iff_empty`, `stableConjecture_iff_empty`); and the
+ordered endpoint adds nothing, since every relator permutation is reachable
+(`stableReachable_standard_iff_permuted`).
+
+`lean/StableCertificate/Invariance.lean` proves that presenting the trivial group is
+invariant along stable paths (`StableReachable.presentsTrivialGroup_iff`), by showing
+ordinary moves preserve the normal closure of the relators and stabilization
+preserves the presented group. Consequences: anything stably reachable to a standard
+tuple presents the trivial group, so the conjecture can be stated as a biconditional
+(`stableConjecture_iff_forall_iff`), and every accepted certificate proves that its
+starting presentation presents the trivial group (`checkEncoded_presentsTrivialGroup`).
+
+`lean/StableCertificate/Chain.lean` proves an infinite family AC-trivial at every
+rank: conjugation chains, whose relators say `x_i = z_i x_{i+1}^{±1} z_i⁻¹` for
+arbitrary words `z_i` with the last generator killed (`chain_reachable`, three
+official moves per relator; `chain_stableReachable`; `chain_permuted_reachable`).
+The argument is the substitution step of Shehper et al., arXiv:2408.15332v2,
+Theorem 16 and Remark 17, stripped of its knot-diagram origin.
+
 Trust base: Lean 4.29.1, Mathlib `5e932f97`, the official `AC.lean` at commit
 `a0fd6e6` unchanged (sha256 `927ba318…cfca1b`, asserted in CI), and the axioms
 `propext`, `Classical.choice`, `Quot.sound`. No `sorry`, no `native_decide`, no
@@ -56,7 +82,7 @@ fail is not a check, and the axiom gate is run against a `sorry` and a
 | Generated corpus: loops through ranks up to 8 with non-final destabilizations and translated undo | 400/400 accepted by the official verifier and by the checker; all 257 ids exercised |
 | One-move mutations (replace, delete, insert, transpose) of every accepted path | 3,296 mutants, 3,296 agreements, 469 accepted by both |
 | Kernel theorems (`decide +kernel`) | 46 certificates: 6 golden, 20 training, 20 generated; up to 161 moves and rank 8; longest 2.96 s wall including imports |
-| Axiom gate | five soundness theorems and all 46 kernel theorems within the three axioms; negative controls fail as required |
+| Axiom gate | fifteen named theorems (soundness, equivalence, endpoint, invariance, chain) and all 46 kernel theorems within the three axioms; negative controls fail as required |
 
 Timings are in `ledger/kernel_timings.json`. The official verifier's compiled
 replay is linear in path length; a 5,000-move path replays in 0.03 s.
@@ -81,6 +107,9 @@ build log. The third line runs the whole table above and the axiom gate.
 | `lean/StableCertificate/Table.lean` | generated: the 257 frozen rows |
 | `lean/StableCertificate/Core.lean` | executable moves, decoder, replay, soundness theorems |
 | `lean/StableCertificate/Encode.lean` | untrusted integer encoding at every rank, for the tests |
+| `lean/StableCertificate/Official.lean` | symmetry, equivalence, endpoint and permutation lemmas for the official relations |
+| `lean/StableCertificate/Invariance.lean` | the presented group is invariant along stable paths |
+| `lean/StableCertificate/Chain.lean` | conjugation chains are AC-trivial at every rank |
 | `lean/Main.lean` | `stablecheck`, a line-oriented JSON front end |
 | `lean/Checks/` | kernel-checked certificates; `Checks/Kernel/` is generated |
 | `tools/` | table generator, differential tests, corpus generator, kernel suite, axiom gate |

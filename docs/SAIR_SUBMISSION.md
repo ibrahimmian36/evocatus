@@ -39,13 +39,35 @@ invert `Fin.succAbove`), `step_sound` (every accepted table row is an official
 `check_sound` and `checkEncoded_sound` (an accepted replay from rank 2 to the empty
 presentation is an official stable path to `⟨2, standard 2⟩`).
 
+**Facts about the official relations.** `AC.lean` states in prose that every move can
+be undone, that reachability is an equivalence relation, and that the stable
+conjecture may end at the empty presentation; it does not prove them. We prove
+them against the unchanged definitions: `Step.reverse`, `StableStep.reverse`,
+`Reachable.equivalence`, `StableReachable.equivalence`, `stableConjecture_iff_empty`,
+and `stableReachable_standard_iff_permuted` (the ordered endpoint adds no
+restriction). We also prove that presenting the trivial group is invariant along
+stable paths (`StableReachable.presentsTrivialGroup_iff`: ordinary moves preserve the
+normal closure of the relators, stabilization preserves the presented group), so the
+conjecture's hypothesis is a property of the stable class, the conjecture is
+equivalent to a biconditional (`stableConjecture_iff_forall_iff`), and every accepted
+certificate also proves its starting presentation trivial
+(`checkEncoded_presentsTrivialGroup`).
+
+**An infinite family, at every rank.** Conjugation chains, whose relators say
+`x_i = z_i x_{i+1}^{±1} z_i⁻¹` for arbitrary words `z_i` with the last generator
+killed, are AC-trivial by three official moves per relator (`Chain.chain_reachable`,
+hence `chain_stableReachable`, and every relator permutation of one). This is the
+substitution argument of Shehper et al., arXiv:2408.15332v2, Theorem 16 and Remark
+17, formalized without the knot-diagram hypothesis; the Wirtinger presentations of
+unknot diagrams are the motivating instances and are not formalized here.
+
 **Trust base.** Lean 4.29.1, Mathlib 5e932f97, the official `AC.lean` at a0fd6e6
 byte-identical (sha256 asserted in CI), axioms exactly `propext`,
 `Classical.choice`, `Quot.sound`. No `sorry`, no `native_decide`. The move table is
 generated from the official `stable_move_spec.json` and re-serialized in Lean for a
 byte diff against the specification, so no row was typed by hand.
 
-**What is not claimed.** No progress on the ordinary or stable conjecture. No
+**What is not claimed.** No progress on either conjecture beyond the family above. No
 resource limits: the Discovery verifier also rejects on path length, relator length
 and work, and this checker does not, so acceptance here does not imply acceptance
 there. No proved equivalence with the reference verifier; agreement is tested.

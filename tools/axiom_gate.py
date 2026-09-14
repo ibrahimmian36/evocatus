@@ -47,7 +47,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--names", nargs="*", default=[
         "AC.Stable.checkEncoded_sound", "AC.Stable.check_sound", "AC.Stable.step_sound",
-        "AC.Stable.stab_sound", "AC.Stable.destab_sound"])
+        "AC.Stable.stab_sound", "AC.Stable.destab_sound",
+        "AC.Reachable.equivalence", "AC.StableReachable.equivalence",
+        "AC.stableConjecture_iff_empty", "AC.stableReachable_standard_iff_permuted",
+        "AC.Chain.chain_reachable", "AC.Chain.chain_stableReachable",
+        "AC.StableReachable.presentsTrivialGroup_iff", "AC.presentsTrivialGroup_of_stableReachable_standard",
+        "AC.stableConjecture_iff_forall_iff", "AC.Stable.checkEncoded_presentsTrivialGroup"])
     ap.add_argument("--imports", nargs="*", default=["StableCertificate"])
     ap.add_argument("--negative-control", action="store_true")
     a = ap.parse_args()

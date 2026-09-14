@@ -2,3 +2,6 @@ import StableCertificate.Row
 import StableCertificate.Table
 import StableCertificate.Core
 import StableCertificate.Encode
+import StableCertificate.Official
+import StableCertificate.Chain
+import StableCertificate.Invariance

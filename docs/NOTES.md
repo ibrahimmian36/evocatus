@@ -47,3 +47,15 @@ Observations that were not in the handoff and that future work needs.
 7. **Not done.** Phase 5 (a stable search on sac-00399) was not started; it needs an
    explicit budget. The AC-spec resource-limit vectors have no analogue and are
    recorded, not compared.
+
+8. **Structural modules (2026-09-14).** `Official.lean`: `Step.reverse` needs three
+   official steps for right multiplication (via the upstream `Steps.mulInvRight`) and
+   one each for inversion and conjugation. `Invariance.lean`: normal-closure equality
+   for ordinary moves via `normalClosure_le_normal` in both directions; stabilization
+   via the retraction `unstab g := FreeGroup.lift (Fin.insertNth g 1 of)` and the
+   comap argument `map_mem_normalClosure_image`. `Chain.lean`: the family is stated
+   with `upTo z s m` (relators below `m` in chain form), trivialized from the top by
+   conjugate, multiply, conjugate. Pitfalls: `rw [h]` with `h : R i = …` rewrites
+   inside `Function.update R i …` too, so `set` the updated tuple first; anonymous
+   constructors for `subset_normalClosure ⟨i, rfl⟩` need a known expected type, so
+   use `refine … ?_` then `exact`.
