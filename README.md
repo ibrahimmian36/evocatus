@@ -74,6 +74,18 @@ that it reduces to the single case `w = x_i` (`conjecture19_reduction`,
 `lean/StableCertificate/AnyRank.lean` adds `checkEncodedAt`, a checker for
 certificates starting at any rank, with `checkEncodedAt_sound`.
 
+`lean/StableCertificate/Lemma11.lean` proves Lemma 11 of Shehper et al.,
+substitution and removal, against the official stable relation: if
+`⟨x₁,…,xₙ, y | r₁,…,rₙ, y⁻¹w⟩` presents the trivial group and `w` is a word in the
+`x`, then it is stably reachable to `⟨x | r₁[w/y],…,rₙ[w/y]⟩`
+(`Lemma11.substitution_removal`), with `y` at any generator position and `y⁻¹w` at
+any relator index; stable triviality transfers both ways (`Lemma11.stableTrivial_iff`)
+and the reduced presentation presents the trivial group. This is the paper's
+stable-specific lemma, the supermove that lowers rank. The proof substitutes `w` for
+`y` through the normal-closure lemma (each occurrence is congruence modulo `y⁻¹w`),
+transfers triviality to the reduced tuple through the retraction `y ↦ w`, replaces
+`y⁻¹w` by `y`, and removes the pair by one official destabilization.
+
 Trust base: Lean 4.29.1, Mathlib `5e932f97`, the official `AC.lean` at commit
 `a0fd6e6` unchanged (sha256 `927ba318…cfca1b`, asserted in CI), and the axioms
 `propext`, `Classical.choice`, `Quot.sound`. No `sorry`, no `native_decide`, no
@@ -105,7 +117,8 @@ fail is not a check, and the axiom gate is run against a `sorry` and a
 | One-move mutations (replace, delete, insert, transpose) of every accepted path | 3,296 mutants, 3,296 agreements, 469 accepted by both |
 | Kernel theorems (`decide +kernel`) | 46 certificates: 6 golden, 20 training, 20 generated; up to 161 moves and rank 8; longest 2.96 s wall including imports |
 | Conjugation-tree family (`tools/family_tests.py`) | 120 random and forced instances at ranks 1–8 (chains, stars, random trees, `z` containing `x_i` and `x_{p(i)}`, all-negative signs): Lean `#eval` of `tree` equals the independent Python construction 120/120; the extracted three-moves-per-relator certificates are accepted by the official verifier 120/120 and 20 are kernel-checked through `checkEncodedAt` (up to rank 8, 73 moves); the braid witness and a rank-2 instance of the normal-closure mechanism are verified and kernel-checked |
-| Axiom gate | 23 named theorems and all 66 kernel theorems within the three axioms; negative controls fail as required |
+| Substitution and removal (`tools/lemma11_tests.py`) | 120 instances built by reverse substitution from conjugation trees at ranks 2–8, with `y` and `y⁻¹w` at independent positions including the corners and `g = i`, `w` empty, one letter, or containing every generator, and inverse and repeated occurrences: Lean `reduced` equals the tree 120/120; explicit certificates (substitute back, trivialize, kill `w`, invert, destabilize at position `g`) accepted by the official verifier 120/120, 20 kernel-checked; negative controls recorded |
+| Axiom gate | 26 named theorems and all 86 kernel theorems within the three axioms; negative controls fail as required |
 
 Timings are in `ledger/kernel_timings.json`. The official verifier's compiled
 replay is linear in path length; a 5,000-move path replays in 0.03 s.
@@ -136,6 +149,7 @@ build log. The third line runs the whole table above and the axiom gate.
 | `lean/StableCertificate/Chain.lean`, `Family.lean` | conjugation trees are AC-trivial at every rank; arbitrary root relator |
 | `lean/StableCertificate/Conjecture19.lean` | Conjecture 19 stated against the official definitions and reduced to `w = x_i` |
 | `lean/StableCertificate/AnyRank.lean` | certificates from any starting rank |
+| `lean/StableCertificate/Lemma11.lean` | substitution and removal (Lemma 11) against the official stable relation |
 | `lean/Main.lean` | `stablecheck`, a line-oriented JSON front end |
 | `lean/Checks/` | kernel-checked certificates; `Checks/Kernel/` is generated |
 | `tools/` | table generator, differential tests, corpus generator, kernel suite, axiom gate |

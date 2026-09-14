@@ -9,3 +9,4 @@ import StableCertificate.NormalClosure
 import StableCertificate.Family
 import StableCertificate.Conjecture19
 import StableCertificate.AnyRank
+import StableCertificate.Lemma11

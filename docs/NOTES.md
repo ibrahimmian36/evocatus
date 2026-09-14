@@ -76,3 +76,15 @@ Observations that were not in the handoff and that future work needs.
    must be given to `simp` explicitly; `omega` needs `Fin.lt_def` facts as naturals;
    rank-2 certificates print axioms `[propext, Quot.sound]`, so gates must test
    subsets, not exact strings.
+
+10. **Phase 7 (2026-09-14), see docs/PHASE7_PROMPT.md.** Lemma 11 proved in one
+    build after one fix (a forgotten `subset_normalClosure` before a witness). The
+    substitution over indices is an induction on a list with the partial tuple
+    `substOn`, whose value at `k` is `subst (R k)` iff `k ≠ i ∧ k ∈ L`; a relator
+    already substituted contributes `1` to the normal closure, an unsubstituted one
+    contributes `r⁻¹ · r[w/y]`, in the normal closure of `{y⁻¹w}` by the two-homomorphism
+    argument. Triviality transfers to the reduced tuple through `retract g w'`
+    (`y ↦ w'`), using `map_mem_normalClosure_image` twice. The test builder had a
+    real bug: for an inverse occurrence `u y⁻¹ v` the multiplier is the conjugate of
+    `r_i⁻¹` by `v⁻¹y`, not by `v⁻¹`; the wrong conjugator left the occurrence in place
+    and the scan looped. The loop is now bounded and asserts completion.

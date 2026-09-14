@@ -56,7 +56,9 @@ def main():
         "AC.Reachable.mulRight_normalClosure", "AC.Reachable.standard_of_congr_generator",
         "AC.Chain.tree_reachable", "AC.Chain.tree_with_root_reachable",
         "AC.Chain.tree_with_root_presentsTrivialGroup", "AC.conjecture19_reduction",
-        "AC.conjecture19_iff_generator", "AC.Stable.checkEncodedAt_sound"])
+        "AC.conjecture19_iff_generator", "AC.Stable.checkEncodedAt_sound",
+        "AC.Lemma11.substitution_removal", "AC.Lemma11.stableTrivial_iff",
+        "AC.Lemma11.reduced_presentsTrivialGroup"])
     ap.add_argument("--imports", nargs="*", default=["StableCertificate"])
     ap.add_argument("--negative-control", action="store_true")
     a = ap.parse_args()

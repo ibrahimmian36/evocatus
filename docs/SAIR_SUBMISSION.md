@@ -74,6 +74,16 @@ be replaced by "exponent sum ±1" for general trees: the rank-2 chain with
 `z₁ = x₂x₁` is the braid relation, and the repository records a word of exponent
 sum 1 in the kernel of B₃ → SL(2,5).
 
+**Substitution and removal (Lemma 11), against the stable relation.** If
+`⟨x₁,…,xₙ, y | r₁,…,rₙ, y⁻¹w⟩` presents the trivial group and `w` is a word in the `x`,
+then it is stably reachable to `⟨x | r₁[w/y],…,rₙ[w/y]⟩`
+(`Lemma11.substitution_removal`), for `y` at any generator position and `y⁻¹w` at any
+relator index, and stable triviality transfers both ways (`Lemma11.stableTrivial_iff`).
+This is the paper's stable-specific lemma, the supermove that lowers rank and the tool
+behind its Remark 17 class. The proof substitutes `w` for `y` through the
+normal-closure lemma, transfers triviality to the reduced tuple through the retraction
+`y ↦ w`, replaces `y⁻¹w` by `y`, and removes the pair by one official destabilization.
+
 **Conjecture 19, stated and reduced.** We state Conjecture 19 of Shehper et al.
 against the official definitions and prove that it reduces to the single case
 `w = x_i`: under the hypothesis that every generator is congruent to `x_i^{±1}`
