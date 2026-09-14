@@ -3,7 +3,7 @@
 Observations that were not in the handoff and that future work needs.
 
 1. **Lake dependency on a subdirectory works.** `[[require]] … subDir = "lean"` on
-   Sneiderman's repository at d0ed2c0 resolved Mathlib and the rest through his
+   Sneiderman's repository at d0ed2c0 fetched Mathlib and the rest through his
    manifest. His manifest's `"name": "ACStatement"` versus his package name
    `ac_square_family` caused no trouble.
 
@@ -59,3 +59,20 @@ Observations that were not in the handoff and that future work needs.
    inside `Function.update R i …` too, so `set` the updated tuple first; anonymous
    constructors for `subset_normalClosure ⟨i, rfl⟩` need a known expected type, so
    use `refine … ?_` then `exact`.
+
+9. **Phase 6 (2026-09-14), see docs/PHASE6_PROMPT.md.** The plan's target changed
+   during research: the "any relator of exponent sum ±1" form of Theorem 16 is false
+   for general conjugation chains. The rank-2 chain with `z₁ = x₂x₁` and sign `+` is
+   `x₁x₂x₁ = x₂x₁x₂`, the braid relation; B₃ maps onto SL(2,5) with
+   A = [[1,1],[0,1]], B = [[1,0],[-1,1]] mod 5, and a breadth-first search found
+   `w = x₁² x₂⁻¹ x₁ x₂⁻¹ x₁ x₂⁻¹ x₁² x₂⁻²` of exponent sum 1 in the kernel
+   (`corpus/braid_witness.json`), so `⟨x₁,x₂ | braid, w⟩` surjects onto SL(2,5).
+   The correct hypothesis is congruence of `w` to the root generator modulo the
+   tree relators, which is what `tree_with_root_reachable` assumes. The core lemma
+   `Reachable.mulRight_normalClosure` is proved by `Subgroup.closure_induction` over
+   `normalClosure = closure (conjugatesOfSet _)` with the predicate quantified over
+   the current value of relator `i`; the inverse case uses `Reachable.symm`. Lean
+   pitfalls: `Group.mem_conjugatesOfSet_iff`, not `Subgroup.…`; `let`-bound indices
+   must be given to `simp` explicitly; `omega` needs `Fin.lt_def` facts as naturals;
+   rank-2 certificates print axioms `[propext, Quot.sound]`, so gates must test
+   subsets, not exact strings.

@@ -10,5 +10,6 @@ python3 tools/fuzz_step.py --n 100000 --seed 7
 python3 tools/gen_paths.py --n 400 --seed 20260913
 python3 tools/run_corpus.py --seed 20260913 --mutants-per-path 4
 python3 tools/kernel_theorems.py
+python3 tools/family_tests.py --n 120 --seed 20260914 --kernel 20
 python3 tools/axiom_gate.py --negative-control
 echo "all tests passed"

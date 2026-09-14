@@ -5,3 +5,7 @@ import StableCertificate.Encode
 import StableCertificate.Official
 import StableCertificate.Chain
 import StableCertificate.Invariance
+import StableCertificate.NormalClosure
+import StableCertificate.Family
+import StableCertificate.Conjecture19
+import StableCertificate.AnyRank

@@ -53,13 +53,33 @@ equivalent to a biconditional (`stableConjecture_iff_forall_iff`), and every acc
 certificate also proves its starting presentation trivial
 (`checkEncoded_presentsTrivialGroup`).
 
-**An infinite family, at every rank.** Conjugation chains, whose relators say
-`x_i = z_i x_{i+1}^{±1} z_i⁻¹` for arbitrary words `z_i` with the last generator
-killed, are AC-trivial by three official moves per relator (`Chain.chain_reachable`,
-hence `chain_stableReachable`, and every relator permutation of one). This is the
-substitution argument of Shehper et al., arXiv:2408.15332v2, Theorem 16 and Remark
-17, formalized without the knot-diagram hypothesis; the Wirtinger presentations of
-unknot diagrams are the motivating instances and are not formalized here.
+**The substitution mechanism.** The arguments of Shehper et al. (arXiv:2408.15332v2,
+Lemmas 11 and 15) rest on multiplying a relator by products of conjugates of the
+other relators. We prove the mechanism in full against `AC.Reachable`: relator `i`
+may be right-multiplied by any element of the normal closure of the other relators
+(`Reachable.mulRight_normalClosure`), hence replaced by any word congruent to it
+modulo that normal closure, and Lemma 15 follows in its exact form
+(`Reachable.standard_of_congr_generator`).
+
+**An infinite family, at every rank.** Conjugation trees, whose relators say
+`x_i = z_i x_{p(i)}^{±1} z_i⁻¹` for arbitrary words `z_i` and any parent function with
+`i < p(i)`, with the last generator killed, are AC-trivial by three official moves
+per relator (`Chain.tree_reachable`; chains are `p(i) = i+1`). The root relator may
+be any word congruent to the root generator or its inverse modulo the tree
+relators (`Chain.tree_with_root_reachable`, hence stably trivial and presenting the
+trivial group). This is the substitution step of Theorem 16 and Remark 17 without
+the knot-diagram hypothesis; the Wirtinger presentations of unknot diagrams are
+the motivating instances and are not formalized. The congruence hypothesis cannot
+be replaced by "exponent sum ±1" for general trees: the rank-2 chain with
+`z₁ = x₂x₁` is the braid relation, and the repository records a word of exponent
+sum 1 in the kernel of B₃ → SL(2,5).
+
+**Conjecture 19, stated and reduced.** We state Conjecture 19 of Shehper et al.
+against the official definitions and prove that it reduces to the single case
+`w = x_i`: under the hypothesis that every generator is congruent to `x_i^{±1}`
+modulo the other relators, if `⟨x | r, x_i⟩` is AC-trivial then so is `⟨x | r, w⟩`
+for every `w` of signed exponent sum ±1 (`conjecture19_reduction`,
+`conjecture19_iff_generator`). Nothing beyond the reduction is claimed.
 
 **Trust base.** Lean 4.29.1, Mathlib 5e932f97, the official `AC.lean` at a0fd6e6
 byte-identical (sha256 asserted in CI), axioms exactly `propext`,
@@ -67,7 +87,7 @@ byte-identical (sha256 asserted in CI), axioms exactly `propext`,
 generated from the official `stable_move_spec.json` and re-serialized in Lean for a
 byte diff against the specification, so no row was typed by hand.
 
-**What is not claimed.** No progress on either conjecture beyond the family above. No
+**What is not claimed.** No progress on either conjecture beyond the family and the reduction above. No
 resource limits: the Discovery verifier also rejects on path length, relator length
 and work, and this checker does not, so acceptance here does not imply acceptance
 there. No proved equivalence with the reference verifier; agreement is tested.

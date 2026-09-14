@@ -45,12 +45,34 @@ tuple presents the trivial group, so the conjecture can be stated as a biconditi
 (`stableConjecture_iff_forall_iff`), and every accepted certificate proves that its
 starting presentation presents the trivial group (`checkEncoded_presentsTrivialGroup`).
 
-`lean/StableCertificate/Chain.lean` proves an infinite family AC-trivial at every
-rank: conjugation chains, whose relators say `x_i = z_i x_{i+1}^{±1} z_i⁻¹` for
-arbitrary words `z_i` with the last generator killed (`chain_reachable`, three
-official moves per relator; `chain_stableReachable`; `chain_permuted_reachable`).
-The argument is the substitution step of Shehper et al., arXiv:2408.15332v2,
-Theorem 16 and Remark 17, stripped of its knot-diagram origin.
+`lean/StableCertificate/NormalClosure.lean` proves the mechanism behind the
+substitution arguments of Shehper et al. (arXiv:2408.15332v2, Lemmas 11 and 15):
+relator `i` may be right-multiplied by any element of the normal closure of the
+other relators (`Reachable.mulRight_normalClosure`; each conjugate factor is three
+official moves), hence replaced by any word congruent to it modulo that normal
+closure, and Lemma 15 follows in its exact form (`Reachable.standard_of_congr_generator`).
+
+`lean/StableCertificate/Chain.lean` and `Family.lean` prove an infinite family
+AC-trivial at every rank: conjugation trees, whose relators say
+`x_i = z_i x_{p(i)}^{±1} z_i⁻¹` for arbitrary words `z_i` and any parent function
+with `i < p(i)`, with the last generator killed (`tree_reachable`, three official
+moves per relator; chains are the case `p(i) = i+1`). The root relator may be
+replaced by any word congruent to the root generator or its inverse modulo the
+tree relators (`tree_with_root_reachable`, stably reachable, presents the trivial
+group). This is the substitution step of Theorem 16 and Remark 17 without the
+knot-diagram hypothesis. The congruence hypothesis cannot be weakened to
+"exponent sum ±1" for general trees: the rank-2 chain with `z₁ = x₂x₁` is the braid
+relation, and `corpus/braid_witness.json` records a word of exponent sum 1 in the
+kernel of B₃ → SL(2,5), so that presentation is nontrivial.
+
+`lean/StableCertificate/Conjecture19.lean` states Conjecture 19 of Shehper et al.
+against the official definitions (relators of ℤ with every generator congruent to
+`x_i^{±1}`, `x_i` of infinite order, any `w` of signed exponent sum ±1) and proves
+that it reduces to the single case `w = x_i` (`conjecture19_reduction`,
+`conjecture19_iff_generator`). Nothing beyond the reduction is claimed.
+
+`lean/StableCertificate/AnyRank.lean` adds `checkEncodedAt`, a checker for
+certificates starting at any rank, with `checkEncodedAt_sound`.
 
 Trust base: Lean 4.29.1, Mathlib `5e932f97`, the official `AC.lean` at commit
 `a0fd6e6` unchanged (sha256 `927ba318…cfca1b`, asserted in CI), and the axioms
@@ -82,7 +104,8 @@ fail is not a check, and the axiom gate is run against a `sorry` and a
 | Generated corpus: loops through ranks up to 8 with non-final destabilizations and translated undo | 400/400 accepted by the official verifier and by the checker; all 257 ids exercised |
 | One-move mutations (replace, delete, insert, transpose) of every accepted path | 3,296 mutants, 3,296 agreements, 469 accepted by both |
 | Kernel theorems (`decide +kernel`) | 46 certificates: 6 golden, 20 training, 20 generated; up to 161 moves and rank 8; longest 2.96 s wall including imports |
-| Axiom gate | fifteen named theorems (soundness, equivalence, endpoint, invariance, chain) and all 46 kernel theorems within the three axioms; negative controls fail as required |
+| Conjugation-tree family (`tools/family_tests.py`) | 120 random and forced instances at ranks 1–8 (chains, stars, random trees, `z` containing `x_i` and `x_{p(i)}`, all-negative signs): Lean `#eval` of `tree` equals the independent Python construction 120/120; the extracted three-moves-per-relator certificates are accepted by the official verifier 120/120 and 20 are kernel-checked through `checkEncodedAt` (up to rank 8, 73 moves); the braid witness and a rank-2 instance of the normal-closure mechanism are verified and kernel-checked |
+| Axiom gate | 23 named theorems and all 66 kernel theorems within the three axioms; negative controls fail as required |
 
 Timings are in `ledger/kernel_timings.json`. The official verifier's compiled
 replay is linear in path length; a 5,000-move path replays in 0.03 s.
@@ -109,7 +132,10 @@ build log. The third line runs the whole table above and the axiom gate.
 | `lean/StableCertificate/Encode.lean` | untrusted integer encoding at every rank, for the tests |
 | `lean/StableCertificate/Official.lean` | symmetry, equivalence, endpoint and permutation lemmas for the official relations |
 | `lean/StableCertificate/Invariance.lean` | the presented group is invariant along stable paths |
-| `lean/StableCertificate/Chain.lean` | conjugation chains are AC-trivial at every rank |
+| `lean/StableCertificate/NormalClosure.lean` | relators may be multiplied by the normal closure of the others; Lemma 15 |
+| `lean/StableCertificate/Chain.lean`, `Family.lean` | conjugation trees are AC-trivial at every rank; arbitrary root relator |
+| `lean/StableCertificate/Conjecture19.lean` | Conjecture 19 stated against the official definitions and reduced to `w = x_i` |
+| `lean/StableCertificate/AnyRank.lean` | certificates from any starting rank |
 | `lean/Main.lean` | `stablecheck`, a line-oriented JSON front end |
 | `lean/Checks/` | kernel-checked certificates; `Checks/Kernel/` is generated |
 | `tools/` | table generator, differential tests, corpus generator, kernel suite, axiom gate |

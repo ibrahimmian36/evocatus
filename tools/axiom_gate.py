@@ -52,7 +52,11 @@ def main():
         "AC.stableConjecture_iff_empty", "AC.stableReachable_standard_iff_permuted",
         "AC.Chain.chain_reachable", "AC.Chain.chain_stableReachable",
         "AC.StableReachable.presentsTrivialGroup_iff", "AC.presentsTrivialGroup_of_stableReachable_standard",
-        "AC.stableConjecture_iff_forall_iff", "AC.Stable.checkEncoded_presentsTrivialGroup"])
+        "AC.stableConjecture_iff_forall_iff", "AC.Stable.checkEncoded_presentsTrivialGroup",
+        "AC.Reachable.mulRight_normalClosure", "AC.Reachable.standard_of_congr_generator",
+        "AC.Chain.tree_reachable", "AC.Chain.tree_with_root_reachable",
+        "AC.Chain.tree_with_root_presentsTrivialGroup", "AC.conjecture19_reduction",
+        "AC.conjecture19_iff_generator", "AC.Stable.checkEncodedAt_sound"])
     ap.add_argument("--imports", nargs="*", default=["StableCertificate"])
     ap.add_argument("--negative-control", action="store_true")
     a = ap.parse_args()
