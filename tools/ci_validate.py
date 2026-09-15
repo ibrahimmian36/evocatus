@@ -10,7 +10,7 @@ def main():
     steps = wf["jobs"]["verify"]["steps"]
     run_blocks = "\n".join(s.get("run", "") for s in steps)
     # 1. embedded ledger check
-    step = next(s for s in steps if "ledger" in s.get("name", "").lower())
+    step = next(s for s in steps if "need =" in s.get("run", ""))
     code = re.search(r'python3 -c "(.*)"', step["run"], re.S).group(1)
     need = set(re.findall(r"'([a-z_0-9]+)'", code.split("need =")[1].split("}")[0]))
     outcomes = {}

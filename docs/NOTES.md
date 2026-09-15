@@ -137,3 +137,11 @@ Observations that were not in the handoff and that future work needs.
     rest on a normal-closure hypothesis that is a Prop, not decidable, so instances
     beyond the witnesses need a proof each; `checkEncodedAt_sound` trusts `parsePres`;
     the Discovery tooling has produced no score.
+
+14. **CI ordering (2026-09-15).** The first CI run of the referee-pass commit failed
+    only at the consistency step: the workflow runs the family and Lemma 11 tests
+    with a smaller kernel sample, and those tests regenerate their check files, so
+    the count of `#print axioms` directives was taken on a modified tree. The step
+    now runs right after checkout, on the committed tree, before any test can
+    rewrite a generated file. Everything else in that run passed: the cold build,
+    all 98 axiom lines, and every test family.

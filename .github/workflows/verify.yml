@@ -31,6 +31,12 @@ jobs:
           set -euo pipefail
           python3 tools/gen_table.py --spec official/competition/tools/verifier/data/stable_move_spec.json --out /tmp/Table.lean
           diff /tmp/Table.lean lean/StableCertificate/Table.lean
+      - name: Numbers in the prose match the committed tree and ledger
+        env:
+          EVOCATUS_LEDGER: /tmp/ci_ledger.jsonl
+        run: |
+          set -euo pipefail
+          python3 tools/consistency.py
       - uses: leanprover/lean-action@v1
         with:
           lake-package-directory: lean
@@ -69,7 +75,6 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/axiom_gate.py --negative-control
-          python3 tools/consistency.py
       - name: This run's ledger must contain every test and no failure
         run: |
           set -euo pipefail
