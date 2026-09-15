@@ -125,7 +125,7 @@ fail is not a check, and the axiom gate is run against a `sorry` and a
 | Boundary theorems (`lean/Checks/Edge.lean`) | ranks 0 and 1 of chains, trees and Lemma 11; the decoder's block edges 0, 13, 14, 15, 16, 17, 22, 23, 137, 256, 257 accepted or rejected at the ranks where the specification says so, as kernel-checked theorems |
 | Front-end fuzz (`tools/exe_fuzz.py`) | 35 hostile lines (invalid JSON, missing fields, letters 0 or out of rank, floats, booleans, ids −1, 257 and 2⁶², a 100,000-move list, a 1 MB line): one JSON reply each and the process still answers afterwards; 2,000 edge queries at ranks 0–10 agree with `stable_core.apply_move`; peak memory 85 MB |
 | Non-vacuity witnesses (`lean/Checks/NonVacuous.lean`) | every hypothesis-laden theorem instantiated on concrete data: a rank-2 chain, a nontrivial root relator, Lemma 15 with `e = −1`, a presentation satisfying Conjecture 19's hypotheses (with infinite order proved through the exponent-sum homomorphism), Lemma 11 on `⟨x, y ∣ y⁻¹x, xy⁻¹x⟩`, a two-step `Iterated` chain from rank 3, a rank-3 kernel certificate; and violations where expressible (`Ascending`, the `rel` shape) |
-| Computed prose (`tools/consistency.py`, `tools/ci_validate.py`) | every number in this table is recomputed from the gate list, the check files and the ledger and must match; the CI ledger check is run offline on passing, failing and incomplete ledgers and every tool the workflow calls exists with its flags |
+| Computed prose (`tools/consistency.py`, `tools/ci_validate.py`) | every number in this table is recomputed from the gate list, the check files and the ledger and must match; the CI ledger check is run offline on passing, failing and incomplete ledgers and every tool the workflow calls exists with its flags (`ci_validate.py` needs PyYAML and is run separately from `run_all.sh`) |
 | Axiom gate | 29 named theorems and all 98 kernel theorems within the three axioms; negative controls fail as required |
 
 Timings are in `ledger/kernel_timings.json`. Machine requirements, measured on an
@@ -146,7 +146,8 @@ ACC_OFFICIAL=$PWD/official tools/run_all.sh
 
 The second line builds the library, every kernel theorem under `lean/Checks/`, and
 the `stablecheck` executable the tests drive; `#print axioms` output appears in the
-build log. The third line runs the whole table above and the axiom gate.
+build log. The third line runs the whole table above and the axiom gate, using only
+Python's standard library and the official verifier.
 
 ## Layout
 
