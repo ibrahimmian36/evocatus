@@ -121,3 +121,19 @@ Observations that were not in the handoff and that future work needs.
     10 s and 130 MB, and 4/300 at the same budget in 58 s, all four accepted by the
     builder and written as eight lines (AC and Stable AC). The Discovery Track needs a
     real search stack and a compute budget; nothing here scores.
+
+13. **Phase 10 (2026-09-14), see docs/PHASE10_PROMPT.md.** Referee pass. Added
+    `Checks/NonVacuous.lean` (ten named witnesses, all within the three axioms; the
+    violation of `Ascending` needs only `propext`), `tools/consistency.py` (which
+    immediately caught the kernel-theorem count in the README lagging by twelve),
+    `tools/ci_validate.py` (the embedded ledger check accepts a passing ledger and
+    rejects a failing or incomplete one; every workflow tool exists with its flags),
+    and a fresh-export run: a 2 MB copy of the tree without `lean/.lake` regenerates
+    the table identically, passes the pool-index self-test, and fails closed on the
+    missing binary with the expected message. Lean pitfall recorded: `simp`
+    normalizes `Fin.succAbove 2 1` to `1` before `retract_of_succAbove` can fire, so
+    concrete retraction facts are derived by `rw` on the lemma instance, not by
+    `simpa`. Residual objections a referee could still raise: the family theorems
+    rest on a normal-closure hypothesis that is a Prop, not decidable, so instances
+    beyond the witnesses need a proof each; `checkEncodedAt_sound` trusts `parsePres`;
+    the Discovery tooling has produced no score.

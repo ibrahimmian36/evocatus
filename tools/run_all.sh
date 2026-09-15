@@ -15,4 +15,6 @@ python3 tools/lemma11_tests.py --n 120 --seed 20260914 --kernel 20
 python3 tools/exe_fuzz.py --seed 20260914 --n 2000
 python3 tools/pool_index.py --check
 python3 tools/axiom_gate.py --negative-control
+python3 tools/consistency.py
+python3 tools/ci_validate.py
 echo "all tests passed"
