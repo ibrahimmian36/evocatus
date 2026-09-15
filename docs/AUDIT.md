@@ -1,6 +1,6 @@
 # Claim audit
 
-One row per sentence in README.md and docs/SAIR_SUBMISSION.md that asserts a result.
+One row per sentence in README.md and in the Contributor Network description that asserts a result.
 Hypotheses are stated in words; the test column names the ledger record that
 exercises the statement. A row is open if the prose outruns the theorem. Open rows: 0.
 
